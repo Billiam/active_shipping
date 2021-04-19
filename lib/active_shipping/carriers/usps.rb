@@ -18,23 +18,13 @@ module ActiveShipping
 
     LIVE_DOMAIN = 'production.shippingapis.com'
     LIVE_RESOURCE = 'ShippingAPI.dll'
-
-    TEST_DOMAINS = { # indexed by security; e.g. TEST_DOMAINS[USE_SSL[:rates]]
-      true => 'secure.shippingapis.com',
-      false => 'stg-production.shippingapis.com'
-    }
+    TEST_DOMAIN = 'stg-production.shippingapis.com'
 
     API_CODES = {
       :us_rates => 'RateV4',
       :world_rates => 'IntlRateV2',
       :test => 'CarrierPickupAvailability',
       :track => 'TrackV2'
-    }
-    USE_SSL = {
-      :us_rates => false,
-      :world_rates => false,
-      :test => true,
-      :track => false
     }
 
     CONTAINERS = {
@@ -682,9 +672,8 @@ module ActiveShipping
     end
 
     def request_url(action, request, test)
-      scheme = USE_SSL[action] ? 'https://' : 'http://'
-      host = test ? TEST_DOMAINS[USE_SSL[action]] : LIVE_DOMAIN
-      "#{scheme}#{host}/#{LIVE_RESOURCE}?API=#{API_CODES[action]}&XML=#{URI.encode(request)}"
+      host = test ? TEST_DOMAIN : LIVE_DOMAIN
+      "https://#{host}/#{LIVE_RESOURCE}?API=#{API_CODES[action]}&XML=#{URI.encode(request)}"
     end
 
     def strip_zip(zip)
